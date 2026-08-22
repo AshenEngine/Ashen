@@ -2,7 +2,7 @@
 
 **Ashen** is a pure-Rust game engine built for performance, modularity, and an intuitive developer experience.
 
-> **Status:** Early Development - Building the core foundations.
+> **Status:** Early Development - Building the core foundations.         
 > *Contributions, ideas, and feedback are welcome!*
 
 ## Vision
