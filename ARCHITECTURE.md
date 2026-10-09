@@ -74,8 +74,12 @@ Ashen eliminates the friction between low-level performance and high-level usabi
 └─────────────────────┘  └─────────────────────┘  └───────────┬──────────┘
                                                               │ Graph Execution
                                                   ┌───────────▼──────────┐
-                                                  │  wgpu Render Graph   │
-                                                  │ (Vulkan/Metal/DX12)  │
+                                                  │ Compute-Driven Graph │
+                                                  │  (Vulkan / DX12)     │
+                                                  └───────────┬──────────┘
+                                                              │ Shaders
+                                                  ┌───────────▼──────────┐
+                                                  │ Slang Pipeline (.spv)│
                                                   └──────────────────────┘
 
 ```
@@ -111,10 +115,13 @@ Prefabs exist as reusable asset templates that track property modifications:
 
 ### 4.5 Rendering Architecture
 
-Built on **`wgpu`** for cross-platform API abstraction (Vulkan, Metal, DirectX 12, WebGPU).
+Built on top of native Vulkan and DirectX 12 to allow unrestricted access to modern hardware extensions.
 
-- **Render Command Queue:** Systems record rendering intention into a thread-safe command queue during frame processing. The render thread consumes these commands independently of game logic.
-- **Modular Render Graph:** Render passes (shadows, forward-plus lighting, post-processing) are structured as node executions, enabling straightforward pipeline customisation.
+- **Slang Shader Pipeline:** Instead of a restricted safe shading language, Ashen uses Slang as its universal shading frontend. Shaders leverage Slang’s generics and interfaces to scale cleanly between legacy and high-end hardware profiles. The engine's asset pipeline compiles Slang down to optimized SPIR-V for Vulkan and DXIL for DirectX 12, maximizing GPU pipeline performance.
+  * Slang is a modern, cross-platform shading language that compiles clean high-level abstractions into target-optimized GPU bytecode.
+- **Render Command Queue (Hazel Pattern)**: Systems record rendering intentions into a thread-safe, double-buffered command queue during frame processing. The render thread consumes these commands independently of game logic.
+- **Compute-Driven Framework:** Vertex culling, frustum testing, and occlusion checks are evaluated entirely on the GPU via Slang compute shaders. The CPU records wide draw boundaries, which are culled and executed directly on-hardware using indirect drawing (`vkCmdDrawIndexedIndirect` / `ExecuteIndirect`), keeping the CPU fully decoupled from geometric load.
+- **Data-Driven FrameGraph:** The rendering lifecycle is managed by an explicit FrameGraph. Render passes (shadows, G-Buffer, clustered lighting, post-processing) declare their memory dependencies and resource inputs/outputs upfront. The graph automatically schedules async compute work, minimizes GPU execution barriers, and dynamically strips out passes on lower-end hardware targets.
 
 ### 4.6 Asset Pipeline
 
