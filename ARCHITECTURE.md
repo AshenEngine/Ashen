@@ -117,11 +117,11 @@ Prefabs exist as reusable asset templates that track property modifications:
 
 Built on top of native Vulkan and DirectX 12 to allow unrestricted access to modern hardware extensions.
 
-- **Slang Shader Pipeline:** Instead of a restricted safe shading language, Ashen uses Slang as its universal shading frontend. Shaders leverage Slang’s generics and interfaces to scale cleanly between legacy and high-end hardware profiles. The engine's asset pipeline compiles Slang down to optimized SPIR-V for Vulkan and DXIL for DirectX 12, maximizing GPU pipeline performance.
-  * Slang is a modern, cross-platform shading language that compiles clean high-level abstractions into target-optimized GPU bytecode.
+- **Slang Shader Pipeline:** Instead of a restricted safe shading language, Ashen uses Slang as its universal shading frontend. Shaders leverage Slang’s generics and interfaces to scale cleanly between legacy and high-end hardware profiles. The engine's asset pipeline compiles Slang down to optimised SPIR-V for Vulkan and DXIL for DirectX 12, maximising GPU pipeline performance.
+  * Slang is a modern, cross-platform shading language that compiles clean high-level abstractions into target-optimised GPU bytecode.
 - **Render Command Queue (Hazel Pattern)**: Systems record rendering intentions into a thread-safe, double-buffered command queue during frame processing. The render thread consumes these commands independently of game logic.
 - **Compute-Driven Framework:** Vertex culling, frustum testing, and occlusion checks are evaluated entirely on the GPU via Slang compute shaders. The CPU records wide draw boundaries, which are culled and executed directly on-hardware using indirect drawing (`vkCmdDrawIndexedIndirect` / `ExecuteIndirect`), keeping the CPU fully decoupled from geometric load.
-- **Data-Driven FrameGraph:** The rendering lifecycle is managed by an explicit FrameGraph. Render passes (shadows, G-Buffer, clustered lighting, post-processing) declare their memory dependencies and resource inputs/outputs upfront. The graph automatically schedules async compute work, minimizes GPU execution barriers, and dynamically strips out passes on lower-end hardware targets.
+- **Data-Driven FrameGraph:** The rendering lifecycle is managed by an explicit FrameGraph. Render passes (shadows, G-Buffer, clustered lighting, post-processing) declare their memory dependencies and resource inputs/outputs upfront. The graph automatically schedules async compute work, minimises GPU execution barriers, and dynamically strips out passes on lower-end hardware targets.
 
 ### 4.6 Asset Pipeline
 
